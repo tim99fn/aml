@@ -114,41 +114,11 @@ x_smol,new_test=feature_select_tree(x_train,Y,test,500)
 
 ##
 #x_norm=normalize(x_smol,norm='l1',axis=0)
-
-##
-lin=LinearRegression().fit(X_train,y_train)
-score=r2_score(y_test,lin.predict(X_test))
-
-pred=lin.predict(X_test)
-matrix=np.zeros((2,len(y_test)))
-matrix[0,:]=pred
-matrix[1,:]=y_test
-
-##
-#x_smol=feature_select_tree(x_train,y_train)
-#X_train, X_test, y_train, y_test = train_test_split( x_smol, Y, test_size=0.2, random_state=42)
-clf = RidgeCV(cv=20)
-clf.fit(X_train,y_train)
-score=r2_score(y_test,clf.predict(X_test))
-##
-coef=clf.coef_
-##
-prediction=clf.predict(new_test)
 ##
 #X_train, X_test, y_train, y_test = train_test_split( x_smol, Y, test_size=0.15, random_state=42)
 las= LassoCV(cv=10).fit(x_smol,Y)
-#score=r2_score(y_test,las.predict(X_test))
-prediction=las.predict(new_test)
-##
-test=pd.read_csv('X_test.csv')
-test=test.drop('id',axis=1)
 
-##
-x_test_new,pred=fill_nan(test,prediction)
-x_test_new=scaler.transform(x_test_new)
-x_test_new=scaler.transform(x_test_new)
-x_smol,x_test_new=feature_select_tree(x_train,Y,x_test_new,500)
-##
-prediction=las.predict(x_test_new)
+prediction=las.predict(new_test)
+
 ##
 make_submission(prediction)
