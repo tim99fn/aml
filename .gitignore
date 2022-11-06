@@ -1,3 +1,4 @@
 *.idea/
 vnev/*
 submission.csv
+*__pycache__/
