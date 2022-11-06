@@ -2,3 +2,4 @@
 vnev/*
 *.cfg
 submission.csv
+*__pycache__/
