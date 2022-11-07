@@ -23,7 +23,7 @@ def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = F
     pca = PCA(n_components=dimensions,random_state=42)
 
     # pca.fit already returns data projected on lower dimensions
-    pi = pca.fit_transform(np.append(x_train,y_normed.reshape(-1,1),axis=1))
+    pi = pca.fit_transform(x_train)
 
     # Fit Gaussian Mixture Model
     gm = GaussianMixture(n_components=1, random_state=0).fit(pi)

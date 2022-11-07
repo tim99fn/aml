@@ -61,7 +61,7 @@ x_test = standardization(x_test)
 y_normed = (y_train-np.mean(y_train))/np.std(y_train)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, y_normed, 50, plot=True)
+x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, y_normed, 500, plot=True)
 #x_train, y_train = sub1.outlier_detection(x_train, y_train)
 
 # again normalization
