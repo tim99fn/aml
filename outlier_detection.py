@@ -17,26 +17,32 @@ def outlier_detection(x_train_, y_):
     y_ = np.delete(y_, delsample, axis=0)
     return x_train_, y_
 
-def outlier_detection_gmm(x_train,y,dimensions,percentile = 4, plot = False):
+def outlier_detection_gmm(x_train,y,dimensions,percentile = 5, plot = False):
 
     # extract Principle Components
-    pca = PCA(n_components=dimensions)
+    pca = PCA(n_components=dimensions,random_state=42)
+    #pca1 = PCA(n_components=dimensions,random_state=42)
 
     # pca.fit already returns data projected on lower dimensions
     pi = pca.fit_transform(x_train)
+    #pi1 = pca.fit_transform(x_train)
 
     # Fit Gaussian Mixture Model
     gm = GaussianMixture(n_components=1, random_state=0).fit(pi)
+    #gm1 = GaussianMixture(n_components=1, random_state=0).fit(pi)
 
     # compute probability of each sample belonging to the GMM
     densities = gm.score_samples(pi)
+    #densities1 = gm.score_samples(pi)
 
     # set a density threshold to 4th percentile of the overall density distribution
     # check (https://en.wikipedia.org/wiki/Percentile) for percentile definition
     density_threshold = np.percentile(densities, percentile)
+    #density_threshold1 = np.percentile(densities, percentile)
 
     # remove anomalies from pi
     pi_new = pi[densities >= density_threshold]
+    #pi_new1 = pi[densities >= density_threshold]
 
     # plot 2D result
     if(plot==True):
@@ -45,9 +51,11 @@ def outlier_detection_gmm(x_train,y,dimensions,percentile = 4, plot = False):
     # remove anomalies from x_train & y
     x_train = x_train[densities >= density_threshold]
     y = y[densities >= density_threshold]
+    #y1 = y[densities >= density_threshold]
 
     # print number of outliers
     outliers = pi[densities < density_threshold]
+    print(outliers)
     print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed")
 
     return x_train, y
