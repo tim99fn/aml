@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LassoCV
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 
 # unused imports
 """
@@ -73,8 +74,8 @@ x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, te
 
 # fit the model
 las = LassoCV(cv=10).fit(x_train, y_train)
-prediction = las.predict(x_test)
-print(las.score(x_test_val,y_test_val))
+prediction = las.predict(x_test_val)
+print(r2_score(y_test_val,prediction))
 
 # make a submission
 make_submission(prediction)
