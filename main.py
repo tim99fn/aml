@@ -12,6 +12,7 @@ from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import RidgeCV
 from sklearn.linear_model import LassoCV
+from sklearn.gaussian_process import GaussianProcessRegressor
 
 
 ##
@@ -110,15 +111,21 @@ x_train,Y=outlier_detection(x_train,Y)
 scaler=StandardScaler().fit(x_train)
 x_train=scaler.transform(x_train)
 test=scaler.transform(test)
-x_smol,new_test=feature_select_tree(x_train,Y,test,500)
+#x_smol,new_test=feature_select_tree(x_train,Y,test,500)
 
 ##
 #x_norm=normalize(x_smol,norm='l1',axis=0)
 ##
-#X_train, X_test, y_train, y_test = train_test_split( x_smol, Y, test_size=0.15, random_state=42)
-las= LassoCV(cv=10).fit(x_smol,Y)
+X_train, X_test, y_train, y_test = train_test_split(x_train, Y, test_size=0.15, random_state=42)
+las= LassoCV(cv=10).fit(X_train,y_train)
 
-prediction=las.predict(new_test)
+prediction=las.predict(X_test)
+score=r2_score(y_test,prediction)
+coefs=las.coef_
 
 ##
-make_submission(prediction)
+#make_submission(prediction)
+##
+index=np.where(coefs!=0)
+
+
