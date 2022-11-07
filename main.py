@@ -41,7 +41,6 @@ def standardization(x_data_):
     x_data_ = scaler_.transform(x_data_)
     return x_data_
 
-
 # read in data
 x_train, y_train, test = get_data()
 
@@ -53,7 +52,7 @@ x_train = standardization(x_train)
 test = standardization(test)
 
 # subtask 1: outlier detection
-x_train, Y = sub1.outlier_detection(x_train, Y)
+x_train, Y = sub1.outlier_detection_gmm(x_train, Y,50, plot=True)
 
 # again normalization
 x_train = standardization(x_train)
