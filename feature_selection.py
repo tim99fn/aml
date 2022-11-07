@@ -81,5 +81,6 @@ def remove_uniform_features(x_train_, x_test_):
     unif_cols_indicies = chi_test.nonzero()[0]  # indices of uniform features
     unif_cols_names = x_train_.columns[unif_cols_indicies]  # data frame column names of uniform features
     x_train_ = x_train_.drop(unif_cols_names, axis=1)  # drops these columns
+    x_test_ = x_test_.drop(unif_cols_names, axis=1)
 
     return x_train_, x_test_

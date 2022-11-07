@@ -2,15 +2,15 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LassoCV
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 
 # unused imports
 """
 import xgboost
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import RFE
 from xgboost import XGBRegressor
-from sklearn.metrics import r2_score
 from sklearn.linear_model import RidgeCV
 """
 
@@ -24,8 +24,6 @@ def get_data():
     x_train_ = pd.read_csv('X_train.csv').drop('id', axis=1)
     y_train_ = pd.read_csv('y_train.csv', usecols=['y'])
     x_test_ = pd.read_csv('X_test.csv').drop('id', axis=1)
-    x_test_ = x_test_.fillna(x_test_.mean())
-    x_test_ = x_test_.to_numpy()
     return x_train_, y_train_, x_test_
 
 
@@ -43,31 +41,39 @@ def normalization(x_data_):
 
 
 # read in data
-x_train, y_train, test = get_data()
+x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
-x_train, Y = sub0.fill_nan(x_train, y_train)
+x_train, y_train = sub0.fill_nan(x_train, y_train)
+x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+
+# naive feature deletion
+x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
+x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
 
 # normalization
 x_train = normalization(x_train)
-test = normalization(test)
+x_test = normalization(x_test)
 
 # subtask 1: outlier detection
-x_train, Y = sub1.outlier_detection(x_train, Y)
+x_train, y_train = sub1.outlier_detection(x_train, y_train)
 
-# again normalization
+# again normalization .... is this needed?
+"""
 x_train = normalization(x_train)
-test = normalization(test)
+x_test = normalization(x_test)
+"""
 
-# subtask 3: feature selection
-x_smol, new_test = sub2.feature_select_tree(x_train, Y, test, 500)
+# subtask 2: feature selection
+x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
 
 ##
-# X_train, X_test, y_train, y_test = train_test_split( x_smol, Y, test_size=0.15, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split( x_train, y_train, test_size=0.2, random_state=42)
 
 # fit the model
-las = LassoCV(cv=10).fit(x_smol, Y)
-prediction = las.predict(new_test)
+las = LassoCV(cv=10).fit(X_train, y_train)
+prediction = las.predict(X_test)
+print(r2_score(y_test, prediction))
 
 # make a submission
-make_submission(prediction)
+# make_submission(prediction)
