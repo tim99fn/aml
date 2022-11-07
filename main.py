@@ -36,7 +36,7 @@ def make_submission(prediction_):
     dt.to_csv('submission.csv', header=True, index=False)
 
 
-def normalization(x_data_):
+def standardization(x_data_):
     scaler_ = StandardScaler().fit(x_data_)
     x_data_ = scaler_.transform(x_data_)
     return x_data_
@@ -49,15 +49,15 @@ x_train, y_train, test = get_data()
 x_train, Y = sub0.fill_nan(x_train, y_train)
 
 # normalization
-x_train = normalization(x_train)
-test = normalization(test)
+x_train = standardization(x_train)
+test = standardization(test)
 
 # subtask 1: outlier detection
 x_train, Y = sub1.outlier_detection(x_train, Y)
 
 # again normalization
-x_train = normalization(x_train)
-test = normalization(test)
+x_train = standardization(x_train)
+test = standardization(test)
 
 # subtask 3: feature selection
 x_smol, new_test = sub2.feature_select_tree(x_train, Y, test, 500)
