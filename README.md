@@ -25,5 +25,5 @@ x_smol, new_test = sub2.feature_select_tree(x_train, Y, test, 500)
 
 ```
 
-## Merging.
+## Merging
 If a new function developed works, it can be merged into the main branch. Don't merge fast-forward.
