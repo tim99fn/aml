@@ -1,4 +1,5 @@
 # imports
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LassoCV
@@ -45,27 +46,31 @@ def standardization(x_data_):
 x_train, y_train, test = get_data()
 
 # subtask 0: replace missing values
-x_train, Y = sub0.fill_nan(x_train, y_train)
+x_train, y_train = sub0.fill_nan(x_train, y_train)
+
+# remove features with norm = 0 index = [104,129,489,530]
+norm = np.linalg.norm(x_train,axis=0)
+x_train = np.delete(x_train,np.where(norm==0),1)
 
 # normalization
 x_train = standardization(x_train)
 test = standardization(test)
 
 # subtask 1: outlier detection
-x_train, Y = sub1.outlier_detection_gmm(x_train, Y,50, plot=True)
+x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train,50, plot=True)
 
 # again normalization
 x_train = standardization(x_train)
 test = standardization(test)
 
 # subtask 3: feature selection
-x_smol, new_test = sub2.feature_select_tree(x_train, Y, test, 500)
+x_smol, new_test = sub2.feature_select_tree(x_train, y_train, test, 500)
 
 ##
 # X_train, X_test, y_train, y_test = train_test_split( x_smol, Y, test_size=0.15, random_state=42)
 
 # fit the model
-las = LassoCV(cv=10).fit(x_smol, Y)
+las = LassoCV(cv=10).fit(x_smol, y_train)
 prediction = las.predict(new_test)
 
 # make a submission
