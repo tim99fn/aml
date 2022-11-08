@@ -10,10 +10,8 @@ from sklearn.metrics import r2_score
 """
 import xgboost
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import RFE
 from xgboost import XGBRegressor
-from sklearn.metrics import r2_score
 from sklearn.linear_model import RidgeCV
 """
 
@@ -27,8 +25,6 @@ def get_data():
     x_train_ = pd.read_csv('X_train.csv').drop('id', axis=1)
     y_train_ = pd.read_csv('y_train.csv', usecols=['y'])
     x_test_ = pd.read_csv('X_test.csv').drop('id', axis=1)
-    x_test_ = x_test_.fillna(x_test_.mean())
-    x_test_ = x_test_.to_numpy()
     return x_train_, y_train_, x_test_
 
 
@@ -49,26 +45,28 @@ x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
 x_train, y_train = sub0.fill_nan(x_train, y_train)
+x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
 
-# remove features with norm = 0 index = [104,129,489,530]
-norm = np.linalg.norm(x_train,axis=0)
-x_train = np.delete(x_train,np.where(norm==0),1)
-x_test = np.delete(x_test, np.where(norm == 0), 1)
+# naive feature deletion
+x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
+x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
 
 # normalization
-x_train = standardization(x_train)
-x_test = standardization(x_test)
+x_train = normalization(x_train)
+x_test = normalization(x_test)
 y_normed = (y_train-np.mean(y_train))/np.std(y_train)
 
 # subtask 1: outlier detection
 x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, y_normed, 50, plot=True)
 #x_train, y_train = sub1.outlier_detection(x_train, y_train)
 
-# again normalization
-x_train = standardization(x_train)
-x_test = standardization(x_test)
+# again normalization .... is this needed?
+"""
+x_train = normalization(x_train)
+x_test = normalization(x_test)
+"""
 
-# subtask 3: feature selection
+# subtask 2: feature selection
 x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
 
 #
@@ -80,4 +78,4 @@ prediction = las.predict(x_test_val)
 print(r2_score(y_test_val,prediction))
 
 # make a submission
-make_submission(prediction)
+# make_submission(prediction)
