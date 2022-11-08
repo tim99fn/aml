@@ -51,9 +51,9 @@ x_test = x_test.fillna(x_test.median())  # for the training set use median becau
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
 x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
 
-# normalization
-x_train = normalization(x_train)
-x_test = normalization(x_test)
+# standardization
+x_train = standardization(x_train)
+x_test = standardization(x_test)
 y_normed = (y_train-np.mean(y_train))/np.std(y_train)
 
 # subtask 1: outlier detection
@@ -69,7 +69,7 @@ x_test = normalization(x_test)
 # subtask 2: feature selection
 x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
 
-#
+## train test split
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 
 # fit the model
