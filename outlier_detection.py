@@ -17,10 +17,11 @@ def outlier_detection(x_train_, y_):
     y_ = np.delete(y_, delsample, axis=0)
     return x_train_, y_
 
-def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = False):
+
+def outlier_detection_gmm(x_train, y, dimensions, percentile=5, plot=False):
 
     # extract Principle Components
-    pca = PCA(n_components=dimensions,random_state=42)
+    pca = PCA(n_components=dimensions, random_state=42)
 
     # pca.fit already returns data projected on lower dimensions
     pi = pca.fit_transform(x_train)
@@ -52,6 +53,7 @@ def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = F
     print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed")
 
     return x_train, y
+
 
 def plot_gmm(gm, pi, pi_new, dimensions):
 
@@ -86,5 +88,3 @@ def plot_gmm(gm, pi, pi_new, dimensions):
     axs2[1, 0].scatter(pi_new[:, d1], pi_new[:, d4], c=labels_new, s=40, cmap='viridis')
     axs2[1, 1].scatter(pi_new[:, d2], pi_new[:, d3], c=labels_new, s=40, cmap='viridis')
     plt.show()
-
-    return
