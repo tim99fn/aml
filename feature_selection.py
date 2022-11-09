@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.ensemble import ExtraTreesClassifier
 from scipy.stats import chisquare
+from sklearn.linear_model import LinearRegression
+import statsmodels.api as sm
 
 
 def feature_select_tree(x_train_, y_train_, test_, top_features_):
@@ -84,3 +86,9 @@ def remove_uniform_features(x_train_, x_test_):
     x_test_ = x_test_.drop(unif_cols_names, axis=1)
 
     return x_train_, x_test_
+
+def feature_select_bic(x_train_, y_train_, x_test_):
+
+    model = sm.OLS(y_train_,x_train_).fit()
+    bic = model.bic
+    return bic
