@@ -21,13 +21,13 @@ def outlier_detection(x_train_, y_):
 def outlier_detection_gmm(x_train, y, dimensions, percentile=5, plot=False):
 
     # extract Principle Components
-    pca = PCA(n_components=dimensions, random_state=42)
+    pca = PCA(n_components=dimensions, svd_solver='full')
 
     # pca.fit already returns data projected on lower dimensions
     pi = pca.fit_transform(x_train)
 
     # Fit Gaussian Mixture Model
-    gm = GaussianMixture(n_components=1, random_state=0).fit(pi)
+    gm = GaussianMixture(n_components=1, random_state=42).fit(pi)
 
     # compute probability of each sample belonging to the GMM
     densities = gm.score_samples(pi)
@@ -49,8 +49,8 @@ def outlier_detection_gmm(x_train, y, dimensions, percentile=5, plot=False):
 
     # print number of outliers
     outliers = pi[densities < density_threshold]
-    print(outliers)
-    print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed")
+    # print(outliers)
+    print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed from gmm on pca")
 
     return x_train, y
 

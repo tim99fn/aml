@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.ensemble import ExtraTreesClassifier
 from scipy.stats import chisquare
+from sklearn.decomposition import PCA
 
 
 def feature_select_tree(x_train_, y_train_, test_, top_features_):
@@ -15,9 +16,11 @@ def feature_select_tree(x_train_, y_train_, test_, top_features_):
 
     indices = indices[:top_features_]
 
+    """
     print('Top features:')
     for f in range(top_features_):
         print('%d. feature %d (%f)' % (f + 1, indices[f], importances[indices[f]]))
+    """
 
     x_smol_ = np.zeros((x_train_.shape[0], top_features_))
     new_test_ = np.zeros((test_.shape[0], top_features_))
@@ -84,3 +87,10 @@ def remove_uniform_features(x_train_, x_test_):
     x_test_ = x_test_.drop(unif_cols_names, axis=1)
 
     return x_train_, x_test_
+
+
+def pca_reduction(x_train_, x_test_, dimensions):
+    # extract Principle Components
+    pca = PCA(n_components=dimensions, svd_solver='full')
+    # pca.fit already returns data projected on lower dimensions
+    return pca.fit_transform(x_train_), pca.fit_transform(x_test_)

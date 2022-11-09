@@ -55,21 +55,22 @@ x_test = x_test.fillna(x_test.median())  # for the training set use median becau
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
-# x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
-
-# center data for PCA (dont standardize because scales might be important)
-x_train = center_data(x_train)
-x_test = center_data(x_test)
-
-# subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, 50, plot=True)
+x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
 
 # standardization
 x_train = standardization(x_train)
 x_test = standardization(x_test)
 
+# subtask 1: outlier detection
+x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, 200, plot=False)  # pca to 200 explains 75% of variance
+
 # subtask 2: feature selection
-x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
+print("Feature Selection:")
+# print("features before pca: ", x_train.shape[1])
+# x_train, x_test = sub2.pca_reduction(x_train, x_test, 400)
+# print("features after pca: ", x_train.shape[1])
+x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 110)
+print("features after tree select: ", x_train.shape[1])
 
 # train test split
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
