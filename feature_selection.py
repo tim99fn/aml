@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
 from scipy.stats import chisquare
 from sklearn.decomposition import PCA
-
+from sklearn.linear_model import LassoCV
 
 def feature_select_tree(x_train_, y_train_, test_, top_features_):
     forest = ExtraTreesClassifier(n_estimators=42, max_depth=10, random_state=1)
@@ -91,6 +91,17 @@ def remove_uniform_features(x_train_, x_test_):
     x_test_ = x_test_.drop(unif_cols_names, axis=1)
 
     return x_train_, x_test_
+
+def Lasso_feature_extraction(x_train, x_test,y_train):
+
+    # fit the model
+    las = LassoCV(cv=10).fit(x_train, y_train)
+    coef = np.where(las.coef_ != 0)
+    x_train = x_train[:, coef]
+    x_test = x_test[:, coef]
+    x_train = np.squeeze(x_train)
+    x_test = np.squeeze(x_test)
+    return x_train,x_test
 
 
 def pca_reduction(x_train_, x_test_, dimensions):

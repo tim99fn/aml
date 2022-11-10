@@ -2,12 +2,13 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LassoCV
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern,WhiteKernel
 # unused imports
+##
 """
 import xgboost
 from sklearn.linear_model import LinearRegression
@@ -45,11 +46,11 @@ def standardization(x_data_):
 x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
-# x_train, y_train = sub0.fill_nan(x_train, y_train)
-# x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
-x_train = sub0.knn_imputer(x_train)
-x_test = sub0.knn_imputer(x_test)
-y_train = y_train.to_numpy().reshape(-1)
+x_train, y_train = sub0.fill_nan(x_train, y_train)
+x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+#x_train = sub0.knn_imputer(x_train)
+#x_test = sub0.knn_imputer(x_test)
+#y_train = y_train.to_numpy().reshape(-1)
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
@@ -72,28 +73,23 @@ x_test = normalization(x_test)
 """
 
 # subtask 2: feature selection
-#x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
+#x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 600)
 
 
 #x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 
-# fit the model
-las = LassoCV(cv=10, max_iter=2000).fit(x_train, y_train)
-coef=np.where(las.coef_!=0)
-x_train=x_train[:,coef]
-x_test=x_test[:,coef]
 
-x_train=np.squeeze(x_train)
-x_test=np.squeeze(x_test)
 
+x_train,x_test=sub2.Lasso_feature_extraction(x_train,x_test,y_train)
 
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 ##
-gpr = GaussianProcessRegressor(kernel=Matern()+WhiteKernel, random_state=42).fit(x_train,y_train)
+gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42,normalize_y=False).fit(x_train,y_train)
 prediction=gpr.predict(x_test_val)
 score=r2_score(y_test_val,prediction)
 print(score)
-
-
+##
+matrix=np.stack((prediction,y_test_val))
 # make a submission#
-make_submission(prediction)
+#make_submission(prediction)
+##
