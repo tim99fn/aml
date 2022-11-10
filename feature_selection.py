@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
 from scipy.stats import chisquare
 from sklearn.decomposition import PCA
@@ -46,6 +47,8 @@ def remove_std_zero_features(x_train_, x_test_):
      This function removes all the features from the training set that have std_deviation == 0.
      It also removes the corresponding features in the training set
      """
+    x_train_ = pd.DataFrame(x_train_)
+    x_test_ = pd.DataFrame(x_test_)
     zero_std = (x_train_.std() > 0.0)
     print("we remove ", x_train_.shape[1] - zero_std.sum(), "features which have std_deviation == 0")
     x_train_ = x_train_.loc[:, zero_std]

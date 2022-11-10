@@ -52,8 +52,11 @@ def center_data(x_data_):
 x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
-x_train, y_train = sub0.fill_nan(x_train, y_train)
-x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+# x_train, y_train = sub0.fill_nan(x_train, y_train)
+# x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+x_train = sub0.knn_imputer(x_train)
+x_test = sub0.knn_imputer(x_test)
+y_train = y_train.to_numpy().reshape(-1)
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
@@ -69,7 +72,7 @@ x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, 400, plot=False)
 # subtask 2: feature selection
 print("Feature Selection:")
 print("features before pca: ", x_train.shape[1])
-x_train, x_test = sub2.pca_reduction(x_train, x_test, 400)
+# x_train, x_test = sub2.pca_reduction(x_train, x_test, 400)
 print("features after pca: ", x_train.shape[1])
 x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 200)
 print("features after tree select: ", x_train.shape[1])
@@ -84,7 +87,7 @@ x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, te
 # fit the model
 # lasso regression
 
-las = LassoCV(cv=10).fit(x_train, y_train)
+las = LassoCV(cv=10, max_iter=2000).fit(x_train, y_train)
 prediction = las.predict(x_test_val)
 print(r2_score(y_test_val, prediction))
 """

@@ -18,7 +18,7 @@ def outlier_detection(x_train_, y_):
     return x_train_, y_
 
 
-def outlier_detection_gmm(x_train, y, dimensions, percentile=9, plot=False):
+def outlier_detection_gmm(x_train, y, dimensions, percentile=10, plot=False):
 
     # extract Principle Components
     pca = PCA(n_components=dimensions, svd_solver='full')
