@@ -17,16 +17,17 @@ def outlier_detection(x_train_, y_):
     y_ = np.delete(y_, delsample, axis=0)
     return x_train_, y_
 
-def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = False):
+def outlier_detection_gmm(x_train,x_test,y,y_normed,dimensions,percentile = 5, plot = False):
 
     # extract Principle Components
-    pca = PCA(n_components=dimensions,random_state=42)
+    pca = PCA(n_components=dimensions,svd_solver='full')
 
     # pca.fit already returns data projected on lower dimensions
-    pi = pca.fit_transform(x_train)
+    pi = pca.fit_transform(np.concatenate((x_test,x_train),axis = 0))
 
     # Fit Gaussian Mixture Model
-    gm = GaussianMixture(n_components=1, random_state=0).fit(pi)
+    gm = GaussianMixture(n_components=1, random_state=0).fit(pi[0:x_test.shape[0],:])
+    pi =pi[x_test.shape[0]:,:]
 
     # compute probability of each sample belonging to the GMM
     densities = gm.score_samples(pi)

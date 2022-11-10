@@ -62,7 +62,7 @@ x_test = standardization(x_test)
 y_normed = (y_train-np.mean(y_train))/np.std(y_train)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, y_normed, 200, plot=False)
+x_train, y_train = sub1.outlier_detection_gmm(x_train,x_test, y_train, y_normed, 200, plot=False)
 
 #x_train, y_train = sub1.outlier_detection(x_train, y_train)
 
@@ -73,23 +73,18 @@ x_test = normalization(x_test)
 """
 
 # subtask 2: feature selection
-#x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 600)
-
+#x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
+x_train, x_test = sub2.feature_select_bic(x_train, y_train, x_test)
+#x_train,x_test=sub2.Lasso_feature_extraction(x_train,x_test,y_train)
 
 #x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
-
-
-
-x_train,x_test=sub2.Lasso_feature_extraction(x_train,x_test,y_train)
-
-x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 ##
 gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42,normalize_y=False).fit(x_train,y_train)
-prediction=gpr.predict(x_test_val)
-score=r2_score(y_test_val,prediction)
-print(score)
+prediction=gpr.predict(x_test)
+#score=r2_score(y_test_val,prediction)
+#print(score)
 ##
-matrix=np.stack((prediction,y_test_val))
+#matrix=np.stack((prediction,y_test_val))
 # make a submission#
-#make_submission(prediction)
+make_submission(prediction)
 ##
