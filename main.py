@@ -68,7 +68,7 @@ x_test = normalization(x_test)
 
 # subtask 2: feature selection
 x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 500)
-sub2.feature_select_bic(x_train, y_train, x_test)
+#x_train, x_test = sub2.feature_select_bic(x_train, y_train, x_test)
 
 ## train test split
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)

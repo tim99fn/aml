@@ -1,3 +1,4 @@
+import mpmath
 import numpy as np
 from sklearn.ensemble import ExtraTreesClassifier
 from scipy.stats import chisquare
@@ -89,6 +90,28 @@ def remove_uniform_features(x_train_, x_test_):
 
 def feature_select_bic(x_train_, y_train_, x_test_):
 
-    model = sm.OLS(y_train_,x_train_).fit()
-    bic = model.bic
-    return bic
+    # initialize convergence parameter
+    epsilon = 0.0000001
+
+    # initialize bic value
+    bic_min1 = pow(2,64)
+    bic_min2 = 0
+
+    # initialize best feature array
+    best_features = []
+    best_feature = 0
+
+    # iterate over all possible feature combination by tree method until convergence
+    i=0
+    while abs(bic_min2-bic_min1)>epsilon and i<800:
+        i+=1
+        bic_min2 = bic_min1
+        for j in range(x_train_.shape[1]):
+            if j not in best_features:
+                model = sm.OLS(y_train_, sm.add_constant(x_train_[:, best_features + [j]])).fit()
+                bic = model.bic
+                if bic < bic_min1:
+                    bic_min1 = bic
+                    best_feature = j
+        best_features = best_features + [best_feature]
+    return x_train_[:,best_features],x_test_[:,best_features]
