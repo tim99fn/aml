@@ -47,6 +47,7 @@ def remove_std_zero_features(x_train_, x_test_):
     print("we remove ", x_train_.shape[1] - zero_std.sum(), "features which have std_deviation == 0")
     x_train_ = x_train_.loc[:, zero_std]
     x_test_ = x_test_.loc[:, zero_std]
+    print(type(x_train_))
     return x_train_, x_test_
 
 

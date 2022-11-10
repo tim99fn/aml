@@ -1,3 +1,4 @@
+##
 import numpy as np
 from sklearn.ensemble import IsolationForest
 from sklearn.mixture import GaussianMixture
@@ -12,9 +13,10 @@ def outlier_detection(x_train_, y_):
     pred = isf.predict(x_train_)
     # print(isf.score_samples(x_train))
     delsample = np.where(pred == -1)
-    print(delsample)
-    x_train_ = np.delete(x_train_, delsample, axis=0)
     y_ = np.delete(y_, delsample, axis=0)
+
+    x_train_ = np.delete(x_train_, delsample, axis=0)
+
     return x_train_, y_
 
 def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = False):
@@ -49,6 +51,7 @@ def outlier_detection_gmm(x_train,y,y_normed,dimensions,percentile = 5, plot = F
     # print number of outliers
     outliers = pi[densities < density_threshold]
     print(outliers)
+
     print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed")
 
     return x_train, y
