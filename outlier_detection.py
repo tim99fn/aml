@@ -88,3 +88,4 @@ def plot_gmm(gm, pi, pi_new, dimensions):
     plt.show()
 
     return
+
