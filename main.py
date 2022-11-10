@@ -1,4 +1,4 @@
-## imports
+# imports
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -42,16 +42,18 @@ def standardization(x_data_):
     return x_data_
 
 # read in data
-
 x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
-x_train, y_train = sub0.fill_nan(x_train, y_train)
-x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+# x_train, y_train = sub0.fill_nan(x_train, y_train)
+# x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+x_train = sub0.knn_imputer(x_train)
+x_test = sub0.knn_imputer(x_test)
+y_train = y_train.to_numpy().reshape(-1)
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
-#x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
+x_train, x_test = sub2.remove_uniform_features(x_train, x_test)  # remove features with uniform distribution
 
 # standardization
 x_train = standardization(x_train)
