@@ -5,6 +5,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LassoCV
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
 
 # unused imports
 """
@@ -62,23 +64,35 @@ x_train = standardization(x_train)
 x_test = standardization(x_test)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, 200, plot=False)  # pca to 200 explains 75% of variance
+x_train, y_train = sub1.outlier_detection_gmm(x_train, y_train, 400, plot=False)  # pca to 200 explains 75% of variance
 
 # subtask 2: feature selection
 print("Feature Selection:")
-# print("features before pca: ", x_train.shape[1])
-# x_train, x_test = sub2.pca_reduction(x_train, x_test, 400)
-# print("features after pca: ", x_train.shape[1])
-x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 110)
+print("features before pca: ", x_train.shape[1])
+x_train, x_test = sub2.pca_reduction(x_train, x_test, 400)
+print("features after pca: ", x_train.shape[1])
+x_train, x_test = sub2.feature_select_tree(x_train, y_train, x_test, 200)
 print("features after tree select: ", x_train.shape[1])
+
+# standardization
+x_train = standardization(x_train)
+x_test = standardization(x_test)
 
 # train test split
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 
 # fit the model
+# lasso regression
+
 las = LassoCV(cv=10).fit(x_train, y_train)
 prediction = las.predict(x_test_val)
 print(r2_score(y_test_val, prediction))
-
+"""
+# gaussian process
+kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
+gpr = GaussianProcessRegressor(kernel=kernel, random_state=0).fit(x_train, y_train)
+prediction = gpr.predict(x_test_val)
+print(r2_score(y_test_val, prediction))
+"""
 # make a submission
 # make_submission(prediction)
