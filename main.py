@@ -77,7 +77,7 @@ x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test, 'bic')
 # Model evaluation
 
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
-gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=False).fit(x_train, y_train)
+gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=True).fit(x_train, y_train)
 prediction = gpr.predict(x_test_val)
 
 score = r2_score(y_test_val, prediction)
@@ -92,5 +92,5 @@ plt.legend(loc='upper left')
 plt.show()
 
 # make a submission
-#make_submission(prediction)
+# make_submission(prediction)
 print("that's is")
