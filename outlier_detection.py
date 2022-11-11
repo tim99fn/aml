@@ -93,11 +93,11 @@ def plot_gmm(gm, pi, pi_new, dimensions):
     return
 
 
-def novelty_svm(x_train_, y_train_, x_test_):
+def novelty_svm(x_train_, y_train_, x_test_, threshold=5):
     # fits x_test (because no outliers) and uses the fit to predict outliers in x_train and removes them
     clf = OneClassSVM(gamma='auto').fit(x_test_)
     score = clf.score_samples(x_train_)
-    score_threshold = np.percentile(score, 5)
+    score_threshold = np.percentile(score, threshold)
     x_train_ = x_train_[score >= score_threshold]
     y_train_ = y_train_[score >= score_threshold]
     return x_train_, y_train_

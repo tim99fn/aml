@@ -71,7 +71,7 @@ x_test = standardization(x_test)
 
 # subtask 1: outlier detection
 # x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 5, plot=False)
-x_train, y_train = sub1.novelty_svm(x_train, y_train, x_test)
+x_train, y_train = sub1.novelty_svm(x_train, y_train, x_test, 5)
 
 # subtask 2: feature selection
 x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test)
@@ -79,7 +79,7 @@ x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test)
 
 # Model evaluation
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
-gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42,normalize_y=False).fit(x_train, y_train)
+gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=False).fit(x_train, y_train)
 prediction = gpr.predict(x_test_val)
 score = r2_score(y_test_val, prediction)
 print(score)
@@ -87,4 +87,3 @@ print(score)
 matrix = np.stack((prediction,y_test_val))
 # make a submission
 #make_submission(prediction)
-
