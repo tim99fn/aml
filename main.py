@@ -1,4 +1,5 @@
 # imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -6,15 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel
-# unused imports
-##
-"""
-import xgboost
-from sklearn.linear_model import LinearRegression
-from sklearn.feature_selection import RFE
-from xgboost import XGBRegressor
-from sklearn.linear_model import RidgeCV
-"""
+
 
 # import functions from other files
 import missing_values as sub0
@@ -50,8 +43,16 @@ def robust_transform(x):
 x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
+"""
 x_train, y_train = sub0.fill_nan(x_train, y_train)
 x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+"""
+x_train['label'] = y_train
+x_train = sub0.knn_imputer(x_train, metr=sub0.age_similarity)
+x_train = np.delete(x_train, -1, 1)
+x_test = sub0.knn_imputer(x_test)
+y_train = y_train.to_numpy().reshape(-1)
+
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
@@ -62,19 +63,34 @@ x_train = standardization(x_train)
 x_test = standardization(x_test)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 10, plot=False)
+# x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 5, plot=False)
+x_train, y_train = sub1.novelty_svm(x_train, y_train, x_test, 5)
+
+# standardization
+x_train = standardization(x_train)
+x_test = standardization(x_test)
 
 # subtask 2: feature selection
-x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test)
+x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test, 'bic')
 
 
 # Model evaluation
+
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
-gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42,normalize_y=False).fit(x_train, y_train)
+gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=True).fit(x_train, y_train)
 prediction = gpr.predict(x_test_val)
+
 score = r2_score(y_test_val, prediction)
 print(score)
 
-matrix = np.stack((prediction,y_test_val))
+matrix = np.stack((prediction, y_test_val))
+
+plt.figure()
+plt.hist(prediction, bins=55, alpha=0.6, label='prediction')
+plt.hist(y_test_val, bins=55, alpha=0.6, label='true labels')
+plt.legend(loc='upper left')
+plt.show()
+
 # make a submission
-#make_submission(prediction)
+# make_submission(prediction)
+print("that's is")

@@ -3,7 +3,10 @@ from sklearn.ensemble import IsolationForest
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+from sklearn.svm import OneClassSVM
 import random
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
 
 
 def outlier_detection(x_train_, y_):
@@ -91,3 +94,40 @@ def plot_gmm(gm, pi, pi_new, dimensions):
 
     return
 
+
+def novelty_svm(x_train_, y_train_, x_test_, threshold=5):
+    # fits x_test (because no outliers) and uses the fit to predict outliers in x_train and removes them
+    clf = OneClassSVM(gamma='auto').fit(x_test_)
+    score = clf.score_samples(x_train_)
+    score_threshold = np.percentile(score, threshold)
+    x_train_ = x_train_[score >= score_threshold]
+    y_train_ = y_train_[score >= score_threshold]
+    return x_train_, y_train_
+
+
+def isolation_forest(x_train_, y_train_, x_test, threshold=5):
+    forest = IsolationForest(random_state=0).fit(x_train_)
+    score = forest.score_samples(x_train_)
+    score_threshold = np.percentile(score, threshold)
+    x_train_ = x_train_[score >= score_threshold]
+    y_train_ = y_train_[score >= score_threshold]
+    return x_train_, y_train_
+
+
+def lof(x_train_, y_train_, threshold=5):
+    x_train_ = np.concatenate((x_train_, y_train_.reshape(-1,1)),axis=1)
+    clf = LocalOutlierFactor(n_neighbors=10, metric=age_similarity, novelty=True).fit(x_train_)
+    score = clf.negative_outlier_factor_
+    score_threshold = np.percentile(score, threshold)
+    predict = clf.predict(x_train_)
+    x_train_ = np.delete(x_train_, -1, 1)
+    x_train_ = x_train_[score >= score_threshold]
+    y_train_ = y_train_[score >= score_threshold]
+
+    return x_train_, y_train_
+
+
+def age_similarity(x, y, missing_values=np.nan):
+    age_sim = (x[-1] - y[-1])**2
+    feature_sim = np.linalg.norm(x[:-1]-y[:-1])
+    return (age_sim-feature_sim)**2
