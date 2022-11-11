@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel
-from sklearn.kernel_ridge import KernelRidge
 
 
 # import functions from other files
@@ -94,4 +93,4 @@ plt.show()
 
 # make a submission
 #make_submission(prediction)
-print("thats is")
+print("that's is")
