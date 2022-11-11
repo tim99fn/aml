@@ -50,8 +50,16 @@ def robust_transform(x):
 x_train, y_train, x_test = get_data()
 
 # subtask 0: replace missing values
+"""
 x_train, y_train = sub0.fill_nan(x_train, y_train)
 x_test = x_test.fillna(x_test.median())  # for the training set use median because we don't have labels
+"""
+x_train['label'] = y_train
+x_train = sub0.knn_imputer(x_train, metr=sub0.age_similarity)
+x_train = np.delete(x_train, -1, 1)
+x_test = sub0.knn_imputer(x_test)
+y_train = y_train.to_numpy().reshape(-1)
+
 
 # naive feature deletion
 x_train, x_test = sub2.remove_std_zero_features(x_train, x_test)  # remove features with zero std_deviation
@@ -62,7 +70,7 @@ x_train = standardization(x_train)
 x_test = standardization(x_test)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 10, plot=False)
+x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 5, plot=False)
 
 # subtask 2: feature selection
 x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test)
