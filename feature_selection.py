@@ -35,8 +35,8 @@ def feature_select_tree(x_train_, y_train_, test_, top_features_):
     return x_smol_, new_test_
 
 
-def remove_std_zero_features(x_train_, x_test_):
-    selector = VarianceThreshold()
+def remove_std_zero_features(x_train_, x_test_, thresh=0):
+    selector = VarianceThreshold(threshold=thresh)
     return selector.fit_transform(x_train_), selector.transform(x_test_)
 
 

@@ -1,4 +1,5 @@
 # imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -6,15 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel
-# unused imports
-##
-"""
-import xgboost
-from sklearn.linear_model import LinearRegression
-from sklearn.feature_selection import RFE
-from xgboost import XGBRegressor
-from sklearn.linear_model import RidgeCV
-"""
+from sklearn.kernel_ridge import KernelRidge
+
 
 # import functions from other files
 import missing_values as sub0
@@ -82,12 +76,22 @@ x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test, 'bic')
 
 
 # Model evaluation
+
 x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=False).fit(x_train, y_train)
 prediction = gpr.predict(x_test_val)
+
 score = r2_score(y_test_val, prediction)
 print(score)
 
 matrix = np.stack((prediction, y_test_val))
+
+plt.figure()
+plt.hist(prediction, bins=55, alpha=0.6, label='prediction')
+plt.hist(y_test_val, bins=55, alpha=0.6, label='true labels')
+plt.legend(loc='upper left')
+plt.show()
+
 # make a submission
-# make_submission(prediction)
+#make_submission(prediction)
+print("thats is")
