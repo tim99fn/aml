@@ -87,8 +87,7 @@ def feature_select_bic(x_train_, y_train_, x_test_):
     return x_train_[:,best_features],x_test_[:,best_features]
 
 
-def Lasso_feature_extraction(x_train, x_test,y_train):
-
+def Lasso_feature_extraction(x_train, x_test, y_train):
     # fit the model
     las = LassoCV(cv=10).fit(x_train, y_train)
     coef = np.where(las.coef_ != 0)
@@ -106,9 +105,8 @@ def pca_reduction(x_train_, x_test_, dimensions):
     return pca.fit_transform(x_train_), pca.fit_transform(x_test_)
 
 
-def lasso_lars(x_train_, y_train_, x_test_):
-    reg = LassoLarsIC(criterion='bic', normalize=False)
-    reg.fit(x_train_, y_train_)
-    coef = reg.coef_.nonzero()[0]
-    return x_train_[:, coef], x_test_[:, coef]
+def lasso_lars(x_train_, y_train_, x_test_, crit='bit'):
+    reg = LassoLarsIC(criterion=crit, normalize=False, max_iter=1000).fit(x_train_, y_train_)
+    cof = reg.coef_.nonzero()[0]
+    return x_train_[:, cof], x_test_[:, cof]
 
