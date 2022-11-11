@@ -70,7 +70,7 @@ x_train = standardization(x_train)
 x_test = standardization(x_test)
 
 # subtask 1: outlier detection
-x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 5, plot=False)
+x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 10, plot=False)
 
 # subtask 2: feature selection
 x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test)

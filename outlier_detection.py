@@ -36,22 +36,21 @@ def outlier_detection_gmm(x_train, x_test, y, dimensions, percentile=5,  plot=Fa
     # set a density threshold to 4th percentile of the overall density distribution
     # check (https://en.wikipedia.org/wiki/Percentile) for percentile definition
     density_threshold = np.percentile(densities, percentile)
-    threshold_2 = np.percentile(densities, 100-percentile)
 
     # remove anomalies from pi
-    pi_new = pi[np.logical_and((densities >= density_threshold), (densities <= threshold_2))]
+    pi_new = pi[densities >= density_threshold]
 
     # plot 2D result
     if(plot==True):
         plot_gmm(gm, pi, pi_new, dimensions)
 
     # remove anomalies from x_train & y
-    x_train = x_train[np.logical_and((densities >= density_threshold), (densities <= threshold_2))]
-    y = y[np.logical_and((densities >= density_threshold), (densities <= threshold_2))]
+    x_train = x_train[densities >= density_threshold]
+    y = y[densities >= density_threshold]
 
     # print number of outliers
-    outliers = pi.shape[0]-pi_new.shape[0]
-    print(f"Outlier Detection: \r\n {outliers} outliers have been found and removed")
+    outliers = pi[densities < density_threshold]
+    print(f"Outlier Detection: \r\n {outliers.shape[0]} outliers have been found and removed")
 
     return x_train, y
 
