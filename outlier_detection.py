@@ -7,6 +7,7 @@ from sklearn.svm import OneClassSVM
 import random
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
+import math as m
 
 
 def outlier_detection(x_train_, y_):
@@ -103,6 +104,31 @@ def novelty_svm(x_train_, y_train_, x_test_, threshold=5):
     x_train_ = x_train_[score >= score_threshold]
     y_train_ = y_train_[score >= score_threshold]
     return x_train_, y_train_
+
+def novelty_svm_seperate(x_train_, y_train_, x_test_, threshold=5):
+    # fits x_test (because no outliers) and uses the fit to predict outliers in x_train and removes them
+    x_train_new = np.empty([1,x_train_.shape[1]])
+    y_train_new = np.empty(1)
+    for i in range(int(np.min(y_train_)),int(np.max(y_train_))):
+        index = np.where(y_train_==i)
+        index = np.reshape(index,-1)
+
+        if index.size != 0:
+
+            x_train_seperate = x_train_[index,:]
+            y_train_seperate = y_train_[index]
+
+            clf = OneClassSVM(gamma='auto').fit(x_train_seperate)
+            score = clf.score_samples(x_train_seperate)
+            score_threshold = np.percentile(score, threshold)
+
+            x_train_new = np.concatenate((x_train_new,x_train_seperate[score >= score_threshold]),axis=0)
+            y_train_new = np.concatenate((y_train_new,y_train_seperate[score >= score_threshold]), axis=0)
+
+    # delete first entry from initialization
+    x_train_new=np.delete(x_train_new,0,0)
+    y_train_new=np.delete(y_train_new,0,0)
+    return x_train_new, y_train_new
 
 
 def isolation_forest(x_train_, y_train_, x_test, threshold=5):

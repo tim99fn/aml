@@ -65,6 +65,7 @@ x_test = standardization(x_test)
 # subtask 1: outlier detection
 # x_train, y_train = sub1.outlier_detection_gmm(x_train, x_test, y_train, 400, 5, plot=False)
 x_train, y_train = sub1.novelty_svm(x_train, y_train, x_test, 5)
+#x_train, y_train = sub1.novelty_svm_seperate(x_train, y_train, x_test, 8)
 
 # standardization
 x_train = standardization(x_train)
