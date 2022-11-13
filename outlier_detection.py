@@ -7,6 +7,7 @@ from sklearn.svm import OneClassSVM
 import random
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
+import pandas as pd
 import math as m
 
 
@@ -157,3 +158,11 @@ def age_similarity(x, y, missing_values=np.nan):
     age_sim = (x[-1] - y[-1])**2
     feature_sim = np.linalg.norm(x[:-1]-y[:-1])
     return (age_sim-feature_sim)**2
+
+
+def age_outlier(x, y, threshold=12):
+    outlier_score = pd.read_csv('outlier_score.csv').drop('id', axis=1).to_numpy().reshape(-1)
+    outlier_score -= np.abs(y-np.mean(y))/4
+    x = x[outlier_score < threshold]
+    y = y[outlier_score < threshold]
+    return x, y
