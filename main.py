@@ -76,28 +76,15 @@ x_test = standardization(x_test)
 x_train, x_test = sub2.lasso_lars(x_train, y_train, x_test, 'bic')
 
 # Model evaluation
-#x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
+x_train, x_test_val, y_train, y_test_val = train_test_split(x_train, y_train, test_size=0.15, random_state=42)
 gpr = GaussianProcessRegressor(kernel=Matern()+RBF(), random_state=42, normalize_y=True, ).fit(x_train, y_train)
-prediction = gpr.predict(x_test)
+prediction = gpr.predict(x_test_val)
 make_submission(prediction)
 
-#score = r2_score(y_test_val, prediction)
+score = r2_score(y_test_val, prediction)
+print(score)
 
-xgb = XGBRegressor(n_estimators=100,)
-xgb.fit(x_train, y_train)
-pred_xgb=xgb.predict(x_test_val)
-matrix = np.stack((prediction, pred_xgb,y_test_val))
-xgb_score=r2_score(y_test_val,pred_xgb)
-indices=np.where(np.logical_or(y_test_val<(np.min(y_test_val)+10), y_test_val>(np.max(y_test_val)-10)))
 
-#indices_down=np.where(y_test_val>(np.max(y_test_val)-10))
-#indices=np.concatenate(indices_down,indices_up)
-edge_y_test_val=np.take(y_test_val,indices[0])
-edge_xgb=np.take(pred_xgb,indices[0])
-edge_gpr=np.take(prediction,indices[0])
-edge_matrix=np.stack((edge_gpr, edge_xgb,edge_y_test_val))
-edgescore_xgb=r2_score(edge_y_test_val,edge_xgb)
-edgescore_gpr=r2_score(edge_y_test_val,edge_gpr)
 diff = np.abs(prediction-y_test_val)
 
 
