@@ -51,7 +51,6 @@ def remove_uniform_features(x, x_test_):
         if chisquare(hist, unif).pvalue > 0.05:
             chi_test[i] = 1
 
-    print("we remove ", chi_test.sum(), "uniform looking features")
     elim = chi_test.nonzero()[0]  # indices of uniform features
     x = np.delete(x, elim, axis=1)
     x_test_ = np.delete(x_test_, elim, axis=1)

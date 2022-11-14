@@ -162,7 +162,7 @@ def age_similarity(x, y, missing_values=np.nan):
 
 def age_outlier(x, y, threshold=12):
     outlier_score = pd.read_csv('outlier_score.csv').drop('id', axis=1).to_numpy().reshape(-1)
-    #outlier_score -= np.abs(y-np.mean(y))/4
+    outlier_score -= np.abs(y-np.mean(y))/4+5
     x = x[outlier_score < threshold]
     y = y[outlier_score < threshold]
     return x, y
